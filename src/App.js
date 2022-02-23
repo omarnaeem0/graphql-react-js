@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { GET_TODOS } from './apis';
+import { useQuery } from '@apollo/client';
+import { ApolloWrapper } from './components/ApolloWrapper';
+import { AddTodoCard, Button, Container, Input, ListView, Text } from './components';
+import { useEffect, useState } from 'react';
+import "./App.css";
 
 function App() {
+  const { loading, error, data, refetch } = useQuery(GET_TODOS);
+  console.log('==============', data)
+  if (loading) {
+    return <div>loading</div>
+  }
+  if (error) {
+    return <div>Something went wrong</div>
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AddTodoCard refetch={refetch} />
+      <Container className='TodoListContainer' internalClassName='TodoListInternalContainer'>
+        <ListView items={data.todos} refetch={refetch} />
+      </Container>
     </div>
   );
 }
 
-export default App;
+export default ApolloWrapper(App);
